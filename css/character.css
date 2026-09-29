@@ -1,0 +1,698 @@
+/* ============================================================
+   character / inventory modal — paperdoll layout
+   ============================================================ */
+.modal--character {
+  width: min(780px, 96vw);
+  max-height: 90vh;
+  text-align: left;
+  position: relative;
+  padding: 24px 24px 20px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.modal--character .modal__title {
+  text-align: center;
+  margin-bottom: 18px;
+}
+
+.character-layout {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 18px;
+  flex: 1;
+  min-height: 0;
+}
+
+/* ---------- left col: paperdoll ---------- */
+.paperdoll-col {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  overflow-y: auto;
+  min-height: 0;
+  padding-right: 4px;
+}
+.paperdoll-col::-webkit-scrollbar { width: 4px; }
+.paperdoll-col::-webkit-scrollbar-thumb { background: var(--border-stone); border-radius: 4px; }
+
+.paperdoll {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg-inset);
+  border: 1px solid var(--border-stone-soft);
+  border-radius: var(--radius-lg);
+  padding: 12px 10px;
+}
+
+.paperdoll__stage {
+  position: relative;
+  width: 100%;
+  max-width: 340px;
+  margin: 0 auto;
+}
+
+/* small equip slot for paperdoll, positioned over the figure via inline top/left */
+.equip-slot--sm {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  width: 62px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 4px;
+  background: rgba(20, 16, 28, .5);
+  border: 1px dashed var(--border-stone);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  color: var(--text);
+  transition: border-color 0.15s ease, transform 0.12s ease, box-shadow 0.18s ease, background-color 0.15s ease;
+  min-width: 0;
+  z-index: 2;
+}
+.equip-slot--sm:hover {
+  background: rgba(20, 16, 28, .75);
+}
+.equip-slot--sm:hover {
+  border-color: var(--ember-dim);
+  transform: translate(-50%, -50%) translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255,122,60,0.15);
+  z-index: 3;
+}
+.equip-slot--sm.equip-slot--filled {
+  border-style: solid;
+  border-color: var(--rune);
+  box-shadow: 0 0 8px rgba(155,123,240,0.2);
+}
+.equip-slot--sm.is-selected {
+  border-color: #d4af37;
+  box-shadow: 0 0 10px rgba(212,175,55,.7);
+  z-index: 3;
+}
+.equip-slot__label {
+  font-family: var(--font-display);
+  font-size: 8px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+.equip-slot__icon { font-size: 42px; line-height: 1.2; }
+.equip-slot__name {
+  font-size: 9px;
+  color: var(--text-muted);
+  text-align: center;
+  line-height: 1.2;
+  max-width: 64px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* char stats below paperdoll */
+.char-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: var(--bg-inset);
+  border: 1px solid var(--border-stone-soft);
+  border-radius: var(--radius-md);
+  padding: 10px 12px;
+}
+.char-stat {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+}
+.char-stat__label { color: var(--text-muted); flex: 1; }
+.char-stat__value {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+/* ---------- right col: backpack ---------- */
+.backpack-col {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.backpack-header {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 10px;
+  flex-shrink: 0;
+}
+.backpack-header__title {
+  font-family: var(--font-display);
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+.backpack-header__hint {
+  font-size: 10.5px;
+  color: var(--text-faint);
+}
+
+.inventory-scroll {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+  max-height: 420px;
+  padding: 10px 10px 4px;
+}
+.inventory-scroll::-webkit-scrollbar { width: 5px; }
+.inventory-scroll::-webkit-scrollbar-track { background: transparent; }
+.inventory-scroll::-webkit-scrollbar-thumb {
+  background: var(--border-stone);
+  border-radius: 4px;
+}
+
+.inventory-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 20px 16px;
+  align-content: start;
+}
+
+/* заголовок-разделитель между расходниками и снаряжением —
+   должен занимать всю строку сетки целиком, а не тесниться среди карточек */
+.inv-divider {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 4px 0 2px;
+}
+.inv-divider::before,
+.inv-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--border-stone-soft);
+}
+.inv-divider__label {
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gold);
+  white-space: nowrap;
+}
+
+/* inventory item cards */
+.inventory-item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: 14px 8px 10px;
+  background: var(--bg-inset);
+  border: 1px solid var(--border-stone-soft);
+  border-radius: var(--radius-md);
+  cursor: default;
+  color: var(--text);
+  transition: border-color 0.15s ease, transform 0.12s ease;
+}
+.inventory-item:hover { border-color: var(--ember-dim); transform: translateY(-2px); }
+.inventory-item--equipped {
+  border-color: var(--rune);
+  background: linear-gradient(180deg, rgba(155,123,240,0.07), var(--bg-inset));
+}
+.inventory-item__equipped-badge {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: var(--rune);
+  color: #1a1030;
+  font-family: var(--font-mono);
+  font-size: 8px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  text-align: center;
+  padding: 2px 0;
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+}
+.inventory-item__icon { font-size: 24px; margin-top: 4px; }
+.inventory-item__name {
+  font-size: 10.5px;
+  text-align: center;
+  color: var(--text-muted);
+  line-height: 1.25;
+}
+.inventory-item__bonus {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--gold);
+  font-weight: 600;
+}
+.inventory-item__count {
+  position: absolute;
+  top: -7px;
+  right: -7px;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: var(--ember);
+  color: #1a0e06;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.inventory-item__btns {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: 100%;
+  margin-top: 4px;
+}
+.inventory-item__btn {
+  width: 100%;
+  padding: 6px 8px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-stone);
+  background: var(--bg-panel);
+  color: var(--rune);
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease, transform 0.1s ease;
+}
+.inventory-item__btn:hover:not(:disabled) {
+  border-color: var(--rune);
+  background: rgba(155,123,240,0.12);
+  transform: translateY(-1px);
+}
+.inventory-item__btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  color: var(--text-faint);
+}
+.inventory-item__btn--sell {
+  color: var(--gold);
+  border-color: rgba(224,178,95,0.3);
+}
+.inventory-item__btn--sell:hover:not(:disabled) {
+  border-color: var(--gold);
+  background: rgba(224,178,95,0.1);
+}
+.inventory-empty {
+  font-size: 12.5px;
+  color: var(--text-faint);
+  text-align: center;
+  padding: 30px 0;
+  line-height: 1.7;
+}
+
+/* ============================================================
+   inv-card — РЕАЛЬНЫЕ карточки инвентаря (генерируются в ui.js).
+   Кнопки всегда видимы — никакого hover-reveal, чтобы работало
+   на тач-экранах.
+   ============================================================ */
+.inv-card {
+  position: relative;
+  z-index: 0; /* фиксирует свой стек-контекст постоянно — иначе .inv-card__bg
+                 (z-index:-1) "утекает" под соседние карточки и виден только
+                 когда :hover случайно создаёт стек-контекст через transform */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: 14px 8px 10px;
+  background: var(--bg-inset);
+  border: 1px solid var(--border-stone-soft);
+  border-radius: var(--radius-md);
+  color: var(--text);
+  transition: border-color 0.15s ease, transform 0.12s ease;
+}
+.inv-card:hover { border-color: var(--ember-dim); transform: translateY(-2px); }
+.inv-card--equipped {
+  border-color: var(--rune);
+  background: linear-gradient(180deg, rgba(155,123,240,0.07), var(--bg-inset));
+}
+.inv-card__equipped-badge {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: var(--rune);
+  color: #1a1030;
+  font-family: var(--font-mono);
+  font-size: 8px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  text-align: center;
+  padding: 2px 0;
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+}
+.inv-card__count {
+  position: absolute;
+  top: -7px;
+  right: -7px;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: var(--ember);
+  color: #1a0e06;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.inv-card__fav-btn {
+  position: absolute;
+  top: -7px;
+  left: -7px;
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  border: 1px solid var(--border-stone);
+  background: var(--bg-panel);
+  color: var(--text-faint);
+  font-size: 11px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  cursor: pointer;
+  transition: color 0.12s ease, border-color 0.12s ease, transform 0.12s ease, background 0.12s ease;
+}
+.inv-card__fav-btn:hover {
+  transform: scale(1.12);
+  border-color: var(--gold);
+  color: var(--gold);
+}
+.inv-card__fav-btn.is-active {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: #1a0e06;
+}
+.inv-card--favorite {
+  border-color: var(--gold);
+  background: linear-gradient(180deg, rgba(224,178,95,0.08), var(--bg-inset));
+}
+.inv-card__fav-lock {
+  font-size: 9.5px;
+  color: var(--text-faint);
+  text-align: center;
+  padding: 6px 0;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.inv-card__icon { font-size: 38px; margin-top: 4px; }
+.inv-card__icon .icon-img {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+}
+
+/* полупрозрачная картинка предмета на фоне карточки, чисто декоративно.
+   z-index: -1 держит её НАД собственным фоном карточки, но ПОД иконкой/
+   названием/кнопками (в отличие от абсолютных бейджей, которые и так
+   рисуются поверх благодаря позиционированию). */
+.inv-card__bg {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 70%;
+  opacity: 0.14;
+  pointer-events: none;
+}
+.inv-card__name {
+  font-size: 10.5px;
+  text-align: center;
+  color: var(--text-muted);
+  line-height: 1.25;
+}
+.inv-card__material {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  margin-top: -2px;
+}
+.inv-card__bonus {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--gold);
+  font-weight: 600;
+}
+.inv-card__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: 100%;
+  margin-top: 4px;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+}
+.inv-card:hover .inv-card__actions,
+.inv-card:focus-within .inv-card__actions {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+.inv-card__btn {
+  width: 100%;
+  padding: 8px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-stone);
+  background: var(--bg-panel);
+  color: var(--rune);
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease, transform 0.1s ease;
+}
+.inv-card__btn:hover:not(:disabled) {
+  border-color: var(--rune);
+  background: rgba(155,123,240,0.12);
+  transform: translateY(-1px);
+}
+.inv-card__btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  color: var(--text-faint);
+}
+.inv-card__btn--sell {
+  color: var(--gold);
+  border-color: rgba(224,178,95,0.3);
+}
+.inv-card__btn--sell:hover:not(:disabled) {
+  border-color: var(--gold);
+  background: rgba(224,178,95,0.1);
+}
+/* На тач-устройствах увеличиваем область нажатия под палец */
+@media (pointer: coarse) {
+  .inv-card__btn {
+    padding: 10px;
+    font-size: 10.5px;
+  }
+  .inv-card__actions {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+}
+
+/* responsive: stack on narrow screens */
+@media (max-width: 580px), (max-height: 520px) {
+  .character-layout {
+    grid-template-columns: 1fr;
+  }
+  .paperdoll-col { flex-direction: row; gap: 10px; }
+  .paperdoll { flex: 1; }
+  .char-stats { flex: 1; }
+  .inventory-scroll { max-height: 30vh; }
+  .equip-slot__icon { font-size: 25px; }
+  .equip-slot--sm { width: 49px; padding: 4px 2px; }
+}
+/* ============================================================
+   health modal — тело + сводка персонажа
+   ============================================================ */
+.modal--health {
+  width: min(820px, 96vw);
+  max-height: 90vh;
+  text-align: left;
+  position: relative;
+  padding: 24px 24px 20px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.modal--health .modal__title {
+  text-align: center;
+  margin-bottom: 18px;
+}
+
+.health-layout {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 22px;
+  flex: 1;
+  min-height: 0;
+}
+
+.health-col--body {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  overflow-y: auto;
+  min-height: 0;
+  padding-right: 4px;
+}
+.health-col--body .body-silhouette-wrap {
+  max-width: 300px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.health-col--info {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  overflow-y: auto;
+  min-height: 0;
+  padding-right: 4px;
+}
+
+.health-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: var(--bg-inset);
+  border: 1px solid var(--border-stone-soft);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+}
+.health-summary__bar {
+  height: 14px;
+  border-radius: 999px;
+  background: rgba(0,0,0,.35);
+  overflow: hidden;
+  border: 1px solid var(--border-stone-soft);
+}
+.health-summary__fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #7a1f1f, #d64545);
+  transition: width 0.25s ease;
+}
+.health-summary__value {
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--text);
+}
+
+.health-status {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: var(--bg-inset);
+  border: 1px solid var(--border-stone-soft);
+  border-radius: var(--radius-md);
+  padding: 10px 12px;
+  flex: 1;
+  min-height: 0;
+}
+.health-status__title {
+  font-family: var(--font-display);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.health-status-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  overflow-y: auto;
+}
+.health-status-list__empty {
+  font-size: 12px;
+  color: var(--text-faint);
+  text-align: center;
+  padding: 10px 0;
+}
+.health-status-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border: 1px solid var(--border-stone-soft);
+  border-left: 2px solid transparent;
+  border-radius: var(--radius-sm);
+  background: var(--bg-panel);
+  cursor: pointer;
+  font-size: 11.5px;
+  color: var(--text);
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+.health-status-row:hover {
+  border-color: var(--ember-dim);
+  border-left-color: var(--ember-dim);
+  background: var(--bg-panel-raised);
+}
+.health-status-row__name { flex: 1; color: var(--text-muted); }
+.health-status-row__hp { font-family: var(--font-mono); color: var(--gold); }
+
+@media (max-width: 580px), (max-height: 520px) {
+  .health-layout {
+    grid-template-columns: 1fr;
+  }
+  .health-col--body .body-silhouette-wrap { max-width: 220px; }
+}
+/* только для модалки здоровья – шире, чем стандартная */
+.modal--health {
+  width: min(940px, 98vw) !important;
+  max-width: 960px;
+}
+
+/* левая колонка с силуэтом тоже становится шире, чтобы текст не сжимался */
+.health-layout {
+  grid-template-columns: 360px 1fr !important;
+}
+
+/* модалка инвентаря — чуть уже, чем здоровье, но всё ещё просторная */
+.modal--character {
+  width: min(840px, 96vw) !important;
+  max-width: 860px;
+}
+
+/* колонка с папердоллом увеличена сильнее — чтобы слоты экипировки
+   не слипались друг с другом */
+.character-layout {
+  grid-template-columns: 300px 1fr !important;
+}

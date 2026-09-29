@@ -1,0 +1,94 @@
+/* ============================================================
+   topbar
+   ============================================================ */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border-stone-soft);
+}
+.topbar__brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.topbar__sigil {
+  color: var(--ember);
+  font-size: 22px;
+  filter: drop-shadow(0 0 8px var(--ember-glow));
+}
+.topbar__title {
+  font-family: var(--font-display-deco);
+  font-size: 22px;
+  letter-spacing: 0.12em;
+  margin: 0;
+  background: linear-gradient(180deg, #fff3e6, var(--ember) 130%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  cursor: pointer;
+  transition: filter 0.15s ease, transform 0.15s ease;
+}
+.topbar__title:hover,
+.topbar__title:focus-visible {
+  filter: drop-shadow(0 0 8px var(--ember-glow));
+  transform: translateY(-1px);
+}
+.topbar__title:active {
+  transform: translateY(0);
+}
+.topbar__meta {
+  display: flex;
+  gap: 22px;
+}
+.topbar__stat {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+.topbar__stat-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-faint);
+}
+.topbar__stat-value {
+  font-family: var(--font-mono);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
+}
+.topbar__stat-value--gold { color: var(--gold); }
+
+.topbar__stat--clickable {
+  cursor: pointer;
+  transition: transform 0.12s ease, filter 0.15s ease;
+}
+.topbar__stat--clickable:hover,
+.topbar__stat--clickable:focus-visible {
+  transform: translateY(-1px);
+  filter: drop-shadow(0 0 6px var(--ember-glow));
+}
+.topbar__stat--clickable:active { transform: translateY(0); }
+
+.topbar__action {
+  width: 60px;
+  height: 60px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-stone);
+  background: var(--bg-panel);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.12s ease, border-color 0.15s ease, box-shadow 0.18s ease;
+}
+.topbar__action:hover {
+  transform: translateY(-2px);
+  border-color: var(--rune);
+  box-shadow: 0 6px 16px var(--rune-glow);
+}
+.topbar__action-icon { font-size: 40px; }
+

@@ -1,0 +1,271 @@
+/* ============================================================
+   shop / лавка торговца
+   ============================================================ */
+.modal--shop {
+  width: min(720px, 100%);
+  text-align: left;
+  position: relative;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* скроллится только .shop-grid внутри, не вся модалка */
+  background: linear-gradient(180deg, var(--bg-panel-raised), var(--bg-panel));
+  box-shadow: var(--shadow-deep), 0 0 40px var(--ember-glow);
+}
+.modal--shop::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  background: repeating-linear-gradient(135deg, var(--ember-dim) 0 10px, var(--blood-dim) 10px 20px);
+  opacity: .9;
+  pointer-events: none;
+}
+.modal--shop::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  mix-blend-mode: overlay;
+  opacity: .35;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='150' height='150'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/></svg>");
+  background-size: 150px 150px;
+}
+.modal--shop .modal__title { text-align: center; }
+.modal--shop .modal__subtitle { text-align: center; position: relative; z-index: 1; }
+
+.market-title {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 4px;
+  position: relative;
+  z-index: 1;
+}
+.market-title__eyebrow {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: .3em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+.market-title__main {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--font-display-deco);
+  font-size: 26px;
+  letter-spacing: .04em;
+  color: var(--gold);
+  text-shadow: 0 0 18px var(--ember-glow);
+}
+.market-title__flourish {
+  position: relative;
+  width: 32px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border-stone));
+}
+.market-title__main .market-title__flourish:last-child {
+  background: linear-gradient(90deg, var(--border-stone), transparent);
+}
+.market-title__flourish::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  background: var(--gold);
+  opacity: .8;
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.shop-gold {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: max-content;
+  margin: 0 auto 18px;
+  padding: 8px 20px;
+  border-radius: 999px;
+  border: 1px solid var(--border-stone);
+  background: linear-gradient(180deg, var(--bg-panel-raised), var(--bg-inset));
+  box-shadow: inset 0 0 10px rgba(0,0,0,.5), 0 0 14px rgba(224,178,95,.15);
+  font-family: var(--font-mono);
+  font-size: 14px;
+  color: var(--gold);
+  position: relative;
+  z-index: 1;
+}
+
+.shop-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 270px));
+  align-content: start;
+  justify-content: center;
+  gap: 24px 28px;
+  margin-bottom: 22px;
+  perspective: 900px;
+  flex: 1 1 auto; /* занимает всё, что осталось внутри .modal--shop */
+  min-height: 0;  /* без этого flex-элемент не сможет ужаться и скроллиться */
+  overflow-y: auto;
+  overflow-x: visible;
+  padding: 20px 26px;
+}
+.shop-grid::-webkit-scrollbar { width: 4px; }
+.shop-grid::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 2px;
+}
+.shop-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 18px 12px 14px;
+  background: var(--bg-inset);
+  border: 1px solid var(--border-stone-soft);
+  border-radius: 14px;
+  box-shadow: 0 10px 14px -10px rgba(0,0,0,.55);
+
+  /* 3-D card tilt */
+  position: relative;
+  transform-style: preserve-3d;
+  transition: box-shadow 0.18s ease, border-color 0.18s ease;
+  will-change: transform;
+  cursor: default;
+  /* overflow: hidden убран — он резал свечение медальона по краям карточки.
+     Скруглённые углы шиммер-слоя и так держатся на border-radius: inherit. */
+}
+.shop-item__rivet {
+  position: absolute;
+  top: 8px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #7a5f2c, #3a2c10 80%);
+  box-shadow: inset 0 0 2px rgba(0,0,0,.6), 0 0 2px rgba(224,178,95,.4);
+  z-index: 2;
+}
+.shop-item__rivet--l { left: 8px; }
+.shop-item__rivet--r { right: 8px; }
+
+/* shimmer layer — follows pointer via --rx / --ry set in JS */
+.shop-item::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    circle at var(--mx, 50%) var(--my, 50%),
+    rgba(255, 255, 255, 0.13) 0%,
+    transparent 65%
+  );
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+.shop-item:hover::before { opacity: 1; }
+
+/* glow border on hover — тёплый акцент лавки, отличный от арканных ивентов */
+.shop-item:hover {
+  border-color: rgba(224, 178, 95, 0.5);
+  box-shadow:
+    0 12px 36px rgba(0,0,0,0.5),
+    0 0 20px var(--ember-glow),
+    inset 0 1px 0 rgba(255,255,255,0.07);
+}
+
+/* keep content above the shimmer */
+.shop-item > * { position: relative; z-index: 2; }
+.shop-item__medallion {
+  width: 62px;
+  height: 62px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at 35% 30%, var(--bg-panel-raised), var(--bg-inset));
+  border: 1px solid var(--border-stone);
+  box-shadow: inset 0 0 10px rgba(0,0,0,.5);
+  font-size: 32px;
+  margin-bottom: 2px;
+  transition: border-color .2s ease, box-shadow .2s ease;
+}
+.shop-item:hover .shop-item__medallion {
+  border-color: var(--gold);
+  box-shadow: inset 0 0 10px rgba(0,0,0,.5), 0 0 18px var(--ember-glow);
+}
+.shop-item__medallion .icon-img { width: 42px; height: 42px; object-fit: cover; border-radius: 50%; }
+.shop-item__name {
+  font-family: var(--font-display);
+  font-size: 13px;
+  text-align: center;
+}
+.shop-item__desc {
+  font-size: 10.5px;
+  color: var(--text-faint);
+  text-align: center;
+  line-height: 1.3;
+  min-height: 26px;
+}
+.shop-item__buy {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+  padding: 5px 12px 5px 5px;
+  border-radius: 999px;
+  border: 1px solid var(--border-stone);
+  background: var(--bg-panel);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 12px;
+  cursor: pointer;
+  transition: border-color 0.15s ease, transform 0.12s ease, box-shadow 0.15s ease;
+}
+.shop-item__buy:hover:not(:disabled) {
+  border-color: var(--ember);
+  transform: translateY(-1px);
+  box-shadow: 0 0 12px var(--ember-glow);
+}
+.shop-item__buy:active:not(:disabled) { transform: translateY(0) scale(.96); }
+.shop-item__buy:disabled,
+.shop-item__buy--locked {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.shop-item__coin {
+  flex: 0 0 auto;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  color: #3c2a08;
+  background: radial-gradient(circle at 35% 30%, #f3d38a, var(--gold) 70%);
+  box-shadow: 0 0 6px rgba(224,178,95,.5), inset 0 1px 1px rgba(255,255,255,.6);
+}
+.shop-item__buy--locked .shop-item__coin,
+.shop-item__buy:disabled .shop-item__coin {
+  background: radial-gradient(circle at 35% 30%, #9a9a9a, #4a4a4a 70%);
+  color: #eee;
+  box-shadow: none;
+}
+.shop-item__buy-label {
+  flex: 1;
+  text-align: center;
+  letter-spacing: .02em;
+}
+

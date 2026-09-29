@@ -1,0 +1,128 @@
+/* ============================================================
+   ДЫБЕНКО — design tokens
+   ============================================================ */
+:root {
+  /* color */
+  --bg: #0b0911;
+  --bg-panel: #15111c;
+  --bg-panel-raised: #1c1626;
+  --bg-inset: #0e0a14;
+  --border-stone: #332a42;
+  --border-stone-soft: #261f33;
+
+  --ember: #ff7a3c;
+  --ember-dim: #c2491f;
+  --ember-glow: rgba(255, 122, 60, 0.45);
+
+  --blood: #c2342f;
+  --blood-dim: #7d211e;
+
+  --rune: #9b7bf0;
+  --rune-glow: rgba(155, 123, 240, 0.4);
+
+  --gold: #e0b25f;
+
+  --text: #ece5da;
+  --text-muted: #a89cb8;
+  --text-faint: #6b6080;
+
+  /* type */
+  --font-display: "Alegreya SC", serif;
+  --font-display-deco: "Yeseva One", serif;
+  --font-body: "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+
+  /* layout */
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --shadow-deep: 0 20px 50px rgba(0,0,0,0.55);
+}
+
+/* ============================================================
+   reset
+   ============================================================ */
+* { box-sizing: border-box; }
+html, body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+}
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  line-height: 1.4;
+  position: relative;
+  overflow-x: hidden;
+  /* Фон подземелья: сама иллюстрация — самым нижним слоем, лёгкая тёмная
+     дымка поверх неё для контраста карточек/текста, а прежние едва заметные
+     текстурные градиенты остаются сверху нетронутыми (они и так почти
+     прозрачны — 0.06 и 0.012 альфы, убавлять там нечего). */
+  background-image:
+    radial-gradient(ellipse at 50% -10%, rgba(155,123,240,0.06), transparent 55%),
+    repeating-linear-gradient(45deg, rgba(255,255,255,0.012) 0px, rgba(255,255,255,0.012) 1px, transparent 1px, transparent 3px),
+    linear-gradient(rgba(11,9,17,0.55), rgba(11,9,17,0.55)),
+    url("../img/background/game.png");
+  background-size: auto, auto, cover, cover;
+  background-position: 0 0, 0 0, center, center;
+  background-repeat: repeat, repeat, no-repeat, no-repeat;
+}
+button { font-family: inherit; }
+:focus-visible {
+  outline: 2px solid var(--ember);
+  outline-offset: 3px;
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+}
+
+/* ============================================================
+   ambient torchlight — the signature atmosphere layer
+   ============================================================ */
+.torchlight {
+  position: fixed;
+  top: -10%;
+  width: 50vw;
+  height: 70vh;
+  pointer-events: none;
+  z-index: 0;
+  background: radial-gradient(circle, var(--ember-glow) 0%, transparent 65%);
+  filter: blur(10px);
+  opacity: 0.5;
+  animation: flicker 5.5s ease-in-out infinite;
+}
+.torchlight--left { left: -15%; animation-delay: 0s; }
+.torchlight--right { right: -15%; animation-delay: -2.3s; background: radial-gradient(circle, var(--rune-glow) 0%, transparent 65%); }
+
+@keyframes flicker {
+  0%, 100% { opacity: 0.45; transform: scale(1); }
+  18% { opacity: 0.6; transform: scale(1.04); }
+  32% { opacity: 0.38; transform: scale(0.98); }
+  50% { opacity: 0.55; transform: scale(1.02); }
+  68% { opacity: 0.42; transform: scale(1); }
+  84% { opacity: 0.58; transform: scale(1.03); }
+}
+
+.vignette {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 50% 40%, transparent 35%, rgba(0,0,0,0.65) 100%);
+}
+
+/* ============================================================
+   layout shell
+   ============================================================ */
+.app {
+  position: relative;
+  z-index: 1;
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 28px 20px 60px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+

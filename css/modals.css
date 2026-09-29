@@ -1,0 +1,281 @@
+/* ============================================================
+   modals
+   ============================================================ */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: rgba(5, 4, 8, 0.78);
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: fadeIn 0.2s ease;
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.modal {
+  position: relative;
+  width: min(440px, 100%);
+  max-height: min(680px, 90vh);
+  background: linear-gradient(180deg, var(--bg-panel-raised), var(--bg-panel));
+  border: 1px solid var(--border-stone);
+  border-radius: var(--radius-lg);
+  padding: 28px;
+  text-align: center;
+  box-shadow: var(--shadow-deep), 0 0 40px var(--ember-glow);
+
+  /* Скролл самой модалки (для лора рас, длинных списков и т.д.) —
+     держим ползунок внутри скруглённых углов, не давая ему торчать наружу. */
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.modal::-webkit-scrollbar {
+  width: 8px;
+}
+.modal::-webkit-scrollbar-track {
+  background: transparent;
+  margin: 6px 0; /* не даёт треку упираться в скруглённые углы сверху/снизу */
+}
+.modal::-webkit-scrollbar-thumb {
+  background: rgba(212,175,55,.55);
+  border-radius: 4px;
+  border: 2px solid transparent;
+  background-clip: padding-box; /* тонкий прозрачный зазор от края модалки */
+}
+.modal::-webkit-scrollbar-thumb:hover {
+  background: rgba(212,175,55,.8);
+  background-clip: padding-box;
+}
+.modal__title {
+  font-family: var(--font-display-deco);
+  font-size: 22px;
+  margin: 0 0 6px;
+  color: var(--ember);
+}
+.modal__title--death { color: var(--blood); }
+.modal__subtitle {
+  color: var(--text-muted);
+  font-size: 13px;
+  margin: 0 0 22px;
+}
+.modal__choices {
+  display: flex;
+  gap: 12px;
+}
+.modal__choice {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 18px 10px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-stone);
+  background: var(--bg-inset);
+  color: var(--text);
+  cursor: pointer;
+  transition: transform 0.12s ease, border-color 0.15s ease;
+}
+.modal__choice:hover { transform: translateY(-2px); border-color: var(--ember); }
+.modal__choice-icon.icon-img {
+  width: 48px;
+  height: 48px;
+}
+.modal__choice-name { font-family: var(--font-display); font-size: 13px; }
+.modal__choice-desc { font-size: 11px; color: var(--text-faint); }
+.modal--gameover .action-btn { margin-top: 4px; }
+
+/* ============================================================
+   records modal — лучший забег
+   ============================================================ */
+.modal--records { text-align: center; }
+
+.records-empty {
+  color: var(--text-muted);
+  font-size: 13px;
+  line-height: 1.5;
+  padding: 20px 6px;
+}
+.records-empty--small { padding: 8px 0; font-size: 12px; }
+
+.records-depth {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 4px 0 2px;
+}
+.records-depth__value {
+  font-family: var(--font-display-deco);
+  font-size: 44px;
+  line-height: 1;
+  color: var(--ember);
+  text-shadow: 0 0 18px var(--ember-glow);
+}
+.records-depth__label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-faint);
+  margin-top: 4px;
+}
+
+.records-level {
+  font-family: var(--font-display);
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 0 0 18px;
+}
+
+.records-killer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: center;
+  background: var(--bg-inset);
+  border: 1px solid var(--border-stone);
+  border-radius: var(--radius-md);
+  padding: 10px 16px;
+  margin-bottom: 18px;
+}
+.records-killer__icon { font-size: 26px; line-height: 1; }
+.records-killer__icon .icon-img { width: 32px; height: 32px; }
+.records-killer__text {
+  font-size: 12px;
+  color: var(--text-muted);
+  text-align: left;
+  line-height: 1.4;
+}
+.records-killer__text b { color: var(--blood); font-family: var(--font-display); }
+
+.records-stats {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.records-stat {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 4px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-stone);
+  background: var(--bg-inset);
+}
+.records-stat__icon { width: 22px; height: 22px; }
+.records-stat__value {
+  font-family: var(--font-mono);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
+}
+.records-stat__label {
+  font-size: 10px;
+  color: var(--text-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.records-section-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-faint);
+  text-align: left;
+  margin-bottom: 8px;
+}
+
+.records-equipment {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.records-equip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 4px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-stone);
+  background: var(--bg-inset);
+}
+.records-equip__icon { font-size: 22px; line-height: 1; }
+.records-equip__icon .icon-img { width: 28px; height: 28px; }
+.records-equip__name {
+  font-size: 10px;
+  color: var(--text-muted);
+  text-align: center;
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  line-clamp: 2;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+
+/* ============================================================
+   modal close button
+   ============================================================ */
+.modal__close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1px solid var(--border-stone);
+  background: var(--bg-inset);
+  color: var(--text-faint);
+  font-size: 14px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease, transform 0.12s ease;
+  padding: 0;
+  z-index: 5; /* всегда выше декоративного .market-title (z-index: 1), чтобы не терять клики/hover в лавке */
+}
+.modal__close:hover {
+  color: var(--text);
+  border-color: var(--blood-dim);
+  background: rgba(194, 52, 47, 0.12);
+  transform: rotate(90deg) scale(1.1);
+}
+.modal__close:active {
+  transform: rotate(90deg) scale(0.95);
+}
+
+/* ============================================================
+   responsive
+   ============================================================ */
+@media (max-width: 580px) {
+  .paperdoll-col { flex-direction: row; gap: 10px; }
+  .paperdoll { flex: 1; }
+  .char-stats { flex: 1; }
+
+  .shop-item { padding: 12px 8px; }        /* ← новое: карточки чуть компактнее */
+  .shop-item__icon { font-size: 22px; }    /* ← новое: сетка теперь сама тянется по flex, фиксированная высота на мобилке не нужна */
+}
+
+/* ============================================================
+   enemy counter badge
+   ============================================================ */
+.enemy-counter {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--blood);
+  background: rgba(194,52,47,0.15);
+  border: 1px solid rgba(194,52,47,0.35);
+  border-radius: 999px;
+  padding: 2px 8px;
+  letter-spacing: 0.05em;
+}
+

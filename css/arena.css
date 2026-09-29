@@ -1,0 +1,334 @@
+/* ============================================================
+   arena — the encounter scene
+   ============================================================ */
+.arena {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 18px;
+}
+
+.combatant__frame {
+  background:
+    linear-gradient(180deg, var(--bg-panel-raised), var(--bg-panel));
+  border: 1px solid var(--border-stone);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  display: flex;
+  gap: 16px;
+  box-shadow: var(--shadow-deep), inset 0 1px 0 rgba(255,255,255,0.03);
+  position: relative;
+  transition: transform 0.15s ease;
+}
+.combatant--enemy .combatant__frame {
+  flex-direction: row-reverse;
+  text-align: right;
+  background-image:
+    radial-gradient(circle at 50% 40%, rgba(200, 35, 35, 0) 35%, rgba(178, 28, 28, calc(0.5 * var(--danger-intensity, 0))) 100%),
+    linear-gradient(180deg, var(--bg-panel-raised), var(--bg-panel));
+  border-color: rgba(194, 52, 47, calc(0.3 + 0.7 * var(--danger-intensity, 0)));
+  box-shadow:
+    var(--shadow-deep),
+    inset 0 1px 0 rgba(255,255,255,0.03),
+    0 0 calc(22px * var(--danger-intensity, 0)) rgba(220, 40, 40, calc(0.55 * var(--danger-intensity, 0)));
+  transition: background-image 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+}
+.combatant--enemy .combatant__body { align-items: flex-end; }
+.combatant--enemy .bar__label,
+.combatant--enemy .combatant__headline { flex-direction: row-reverse; }
+.combatant--enemy .stat-grid { justify-content: flex-end; }
+
+.combatant__portrait {
+  flex: 0 0 auto;
+  width: 76px;
+  height: 76px;
+  border-radius: var(--radius-md);
+  background: radial-gradient(circle at 35% 30%, var(--bg-panel-raised), var(--bg-inset));
+  border: 1px solid var(--border-stone);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  box-shadow: inset 0 0 14px rgba(0,0,0,0.6);
+}
+.combatant--player .combatant__portrait { box-shadow: inset 0 0 14px rgba(0,0,0,0.6), 0 0 18px var(--rune-glow); }
+.combatant--enemy .combatant__portrait { box-shadow: inset 0 0 14px rgba(0,0,0,0.6), 0 0 18px rgba(194,52,47,0.35); }
+
+.combatant__body {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+.combatant__headline {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.combatant__name {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+  letter-spacing: 0.02em;
+}
+.combatant__level {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-faint);
+}
+
+/* hit-shake feedback */
+.combatant--hit .combatant__frame { animation: hitshake 0.32s ease; }
+@keyframes hitshake {
+  0% { transform: translateX(0); }
+  20% { transform: translateX(-6px) rotate(-0.5deg); }
+  45% { transform: translateX(5px) rotate(0.5deg); }
+  70% { transform: translateX(-3px); }
+  100% { transform: translateX(0); }
+}
+.combatant--dying .combatant__frame { animation: dying 0.5s ease forwards; }
+@keyframes dying {
+  to { opacity: 0.25; filter: grayscale(1); transform: scale(0.97); }
+}
+
+/* ------------------------------------------------------------
+   poison fx — зелёные частицы над отравленной карточкой
+   ------------------------------------------------------------ */
+.poison-fx-layer {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  z-index: 4;
+}
+.combatant--poisoned .poison-fx-layer { opacity: 1; }
+.combatant--poisoned .combatant__frame {
+  box-shadow: var(--shadow-deep), inset 0 1px 0 rgba(255,255,255,0.03), 0 0 16px rgba(90,200,90,0.35);
+}
+.poison-particle {
+  position: absolute;
+  left: var(--px, 50%);
+  bottom: -6px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #baff6b 0%, #5fae2e 60%, transparent 100%);
+  box-shadow: 0 0 6px 2px rgba(120,220,80,0.65);
+  opacity: 0;
+  transform: translateY(0) scale(var(--pscale, 1));
+  animation: poisonRise var(--pdur, 3s) ease-in var(--pdelay, 0s) infinite;
+}
+@keyframes poisonRise {
+  0%   { opacity: 0; transform: translate(0, 0) scale(var(--pscale, 1)); }
+  12%  { opacity: 0.9; }
+  50%  { transform: translate(calc(var(--pscale, 1) * 8px), -46px) scale(var(--pscale, 1)); }
+  85%  { opacity: 0.6; }
+  100% { opacity: 0; transform: translate(calc(var(--pscale, 1) * -10px), -92px) scale(calc(var(--pscale, 1) * 0.7)); }
+}
+/* ------------------------------------------------------------
+   combatant--event — карточка не-боевого узла (фонтан, сундук)
+   ------------------------------------------------------------ */
+.combatant--event .combatant__frame {
+  border-color: var(--rune);
+  box-shadow: var(--shadow-deep), 0 0 22px var(--rune-glow), inset 0 1px 0 rgba(255,255,255,0.03);
+}
+.combatant--event .combatant__portrait {
+  box-shadow: inset 0 0 14px rgba(0,0,0,0.6), 0 0 18px var(--rune-glow);
+}
+.combatant--event .combatant__name { color: var(--rune); }
+.event-card__desc {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-muted);
+  max-width: 34ch;
+}
+
+/* ============================================================
+   stat bars — carved-stone troughs with ember/violet fill
+   ============================================================ */
+.bar { display: flex; flex-direction: column; gap: 4px; }
+.bar__track {
+  position: relative;
+  height: 14px;
+  border-radius: 999px;
+  background: var(--bg-inset);
+  border: 1px solid var(--border-stone);
+  overflow: hidden;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.7);
+}
+.bar__fill {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--blood-dim), var(--ember) 70%, #ffb877);
+  transition: width 0.45s cubic-bezier(.4,0,.2,1);
+}
+.bar--enemy .bar__fill {
+  background: linear-gradient(90deg, var(--blood-dim), var(--blood) 70%, #ff6b62);
+}
+.bar__fill--xp {
+  background: linear-gradient(90deg, #5a3fae, var(--rune) 70%, #c4b2ff);
+}
+/* ember flicker shimmer riding on top of the fill */
+.bar__flicker {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent 0%, rgba(255,255,255,0.22) 18%, transparent 36%);
+  background-size: 220% 100%;
+  animation: emberSheen 3.2s linear infinite;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+}
+@keyframes emberSheen {
+  0% { background-position: 120% 0; }
+  100% { background-position: -40% 0; }
+}
+.bar__label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+.bar__label-name {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.bar__label-name .icon-img {
+  width: 14px;
+  height: 14px;
+}
+.bar__label-value { font-family: var(--font-mono); color: var(--text); }
+
+/* ============================================================
+   stat chips
+   ============================================================ */
+.stat-grid {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 2px;
+}
+.stat-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  background: var(--bg-inset);
+  border: 1px solid var(--border-stone-soft);
+  border-radius: 999px;
+  font-size: 12px;
+}
+.stat-chip .icon-img {
+  width: 15px;
+  height: 15px;
+}
+.char-stat .icon-img {
+  width: 15px;
+  height: 15px;
+}
+.stat-chip__name { color: var(--text-muted); }
+.stat-chip__value { font-family: var(--font-mono); font-weight: 600; color: var(--text); }
+
+/* ============================================================
+   center divider
+   ============================================================ */
+.arena__divider {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 0 2px;
+}
+.arena__divider-line {
+  width: 1px;
+  height: 36px;
+  background: linear-gradient(180deg, transparent, var(--border-stone), transparent);
+}
+.arena__divider-mark {
+  font-family: var(--font-display);
+  font-size: 12px;
+  letter-spacing: 0.15em;
+  color: var(--text-faint);
+}
+
+/* ============================================================
+   floating combat text
+   ============================================================ */
+.fx-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 5;
+}
+.fx-text {
+  position: absolute;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 22px;
+  color: var(--ember);
+  text-shadow: 0 0 12px rgba(255,122,60,0.7), 0 2px 4px rgba(0,0,0,0.8);
+  animation: floatUp 0.95s ease-out forwards;
+  white-space: nowrap;
+}
+.fx-text--heal { color: #7be08a; text-shadow: 0 0 12px rgba(123,224,138,0.6); }
+.fx-text--poison { color: #8fe06a; text-shadow: 0 0 12px rgba(143,224,106,0.65); }
+.fx-text--crit { color: var(--gold); font-size: 27px; }
+.fx-text--xp { color: var(--rune); font-size: 14px; text-shadow: 0 0 10px var(--rune-glow); }
+.fx-text--miss {
+  color: var(--blood);
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-shadow: 0 0 14px rgba(194,52,47,0.75), 0 2px 4px rgba(0,0,0,0.85);
+  animation: floatUpMiss 1.5s ease-out forwards;
+}
+.fx-text--parry {
+  color: var(--gold);
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-shadow: 0 0 14px rgba(224,178,95,0.85), 0 2px 4px rgba(0,0,0,0.85);
+  animation: floatUpMiss 1.5s ease-out forwards;
+}
+@keyframes floatUp {
+  0% { opacity: 0; transform: translateY(6px) scale(0.85); }
+  15% { opacity: 1; transform: translateY(-6px) scale(1.05); }
+  100% { opacity: 0; transform: translateY(-46px) scale(1); }
+}
+@keyframes floatUpMiss {
+  0%   { opacity: 0;   transform: translateY(6px) scale(0.8); }
+  12%  { opacity: 1;   transform: translateY(-8px) scale(1.15); }
+  30%  { opacity: 1;   transform: translateY(-16px) scale(1); }
+  100% { opacity: 0;   transform: translateY(-64px) scale(1); }
+}
+
+/* ------------------------------------------------------------
+   hideout — экран укрытия при побеге: только карточка игрока,
+   растянутая на всю ширину арены и плавно всплывающая по центру.
+   ------------------------------------------------------------ */
+.arena--hideout .arena__divider,
+.arena--hideout #enemy-card {
+  display: none;
+}
+.arena--hideout #player-card {
+  grid-column: 1 / -1;
+  max-width: 420px;
+  margin: 0 auto;
+  animation: hideoutCenterIn 0.45s ease forwards;
+}
+@keyframes hideoutCenterIn {
+  from { opacity: 0; transform: translateY(8px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+

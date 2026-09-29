@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ДЫБЕНКО — Подземелье</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alegreya+SC:wght@400;500;700;800&family=Yeseva+One&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/topbar.css">
+<link rel="stylesheet" href="css/character.css">
+<link rel="stylesheet" href="css/shop.css">
+<link rel="stylesheet" href="css/arena.css">
+<link rel="stylesheet" href="css/actions-log.css">
+<link rel="stylesheet" href="css/modals.css">
+<link rel="stylesheet" href="css/workbench.css">
+<link rel="stylesheet" href="css/icons.css">
+<link rel="stylesheet" href="css/main-menu.css">
+</head>
+<body>
+
+  <!-- ambient torchlight layer -->
+  <div class="torchlight torchlight--left" aria-hidden="true"></div>
+  <div class="torchlight torchlight--right" aria-hidden="true"></div>
+  <div class="vignette" aria-hidden="true"></div>
+
+  <!-- MAIN MENU -->
+  <div class="main-menu" id="main-menu">
+    <div class="main-menu__embers" aria-hidden="true"></div>
+    <div class="main-menu__layout">
+
+      <!-- CHANGELOG -->
+      <aside class="main-menu__changelog">
+        <div class="changelog-panel__header">
+          <div class="changelog-panel__titles">
+            <span class="changelog-panel__icon">📜</span>
+            <span class="changelog-panel__title">Список изменений</span>
+          </div>
+          <span class="changelog-panel__current" id="changelog-current-version"></span>
+        </div>
+        <div class="changelog-panel__scroll" id="changelog-list">   
+          <div class="changelog-entry">
+            <div class="changelog-entry__header">
+              <div class="changelog-entry__titles">
+                <span class="changelog-entry__icon">🗝️</span>
+                <span class="changelog-entry__name">Новый мир / Новая Жизнь!</span>
+              </div>
+              <span class="changelog-entry__version">v1.1.0</span>
+            </div>
+            <ul class="changelog-entry__items">
+              <li><span class="changelog-badge changelog-badge--new">Новое</span>Добавлено 6 уникальных предметов</li>
+              <li><span class="changelog-badge changelog-badge--new">Новое</span>Серп и нож дает дополнительный хлопок/траву, если он в руках</li>
+              <li><span class="changelog-badge changelog-badge--new">Новое</span>Улучшен "стартовый набор"</li>\
+              <li><span class="changelog-badge changelog-badge--new">Новое</span>Добавлено 4 новых материала: Гоблинская Сталь, Лёгкая Ткань, Нерушимая Сталь, Неуловимая Ткань</li>
+            </ul>
+          </div>
+        </div>
+      </aside>
+
+      <!-- START PANEL -->
+      <div class="main-menu__content">
+        <span class="main-menu__sigil">⛧</span>
+        <h1 class="main-menu__title">ДЫБЕНКО</h1>
+        <p class="main-menu__subtitle">Спустись в подземелье, если осмелишься</p>
+        <button class="main-menu__start" id="btn-start-game">
+          <span class="main-menu__start-icon">⚔️</span>
+          <span>Начать игру</span>
+        </button>
+
+        <button class="main-menu__about" id="btn-about-game">Об игре</button>
+
+        <div class="main-menu__build" id="main-menu-build"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="app">
+
+    <header class="topbar">
+      <div class="topbar__brand">
+        <span class="topbar__sigil">⛧</span>
+        <h1 class="topbar__title" id="topbar-title" title="Расы подземелья" role="button" tabindex="0">ДЫБЕНКО</h1>
+        <span class="topbar__build" id="topbar-build" title="Версия игры"></span>
+      </div>
+      <div class="topbar__meta">
+        <div class="topbar__stat topbar__stat--clickable" id="btn-records" title="Лучший рекорд" role="button" tabindex="0">
+          <span class="topbar__stat-label">Глубина</span>
+          <span class="topbar__stat-value" id="depth-value">1</span>
+        </div>
+        <div class="topbar__stat" title="Золото">
+          <span class="topbar__stat-label">Золото</span>
+          <span class="topbar__stat-value topbar__stat-value--gold" id="gold-value">0</span>
+        </div>
+        <button class="topbar__action" id="btn-health" title="Здоровье" aria-label="Здоровье">
+          <span class="topbar__action-icon">❤️</span>
+        </button>
+        <button class="topbar__action" id="btn-inventory" title="Снаряжение и инвентарь" aria-label="Снаряжение и инвентарь">
+          <span class="topbar__action-icon">🎒</span>
+        </button>
+      </div>
+    </header>
+
+    <main class="arena" id="arena">
+
+      <!-- PLAYER CARD -->
+      <section class="combatant combatant--player" id="player-card" aria-label="Игрок">
+        <div class="combatant__frame">
+          <div class="combatant__portrait">
+            <img src="img/stat/player.png" alt="Странник" width="70" height="70">
+          </div>
+          <div class="combatant__body">
+            <div class="combatant__headline">
+              <h2 class="combatant__name" id="player-name">Странник</h2>
+              <span class="combatant__level">Ур. <span id="player-level">1</span></span>
+            </div>
+
+            <div class="bar bar--hp">
+              <div class="bar__track">
+                <div class="bar__fill" id="player-hp-fill"></div>
+                <div class="bar__flicker"></div>
+              </div>
+              <div class="bar__label">
+                <span class="bar__label-name"><img src="img/stat/health.png" class="icon-img" alt="">Здоровье</span>
+                <span class="bar__label-value"><span id="player-hp-current">0</span>/<span id="player-hp-max">0</span></span>
+              </div>
+            </div>
+
+            <div class="bar bar--xp">
+              <div class="bar__track">
+                <div class="bar__fill bar__fill--xp" id="player-xp-fill"></div>
+              </div>
+              <div class="bar__label">
+                <span class="bar__label-name">Опыт</span>
+                <span class="bar__label-value"><span id="player-xp-current">0</span>/<span id="player-xp-max">0</span></span>
+              </div>
+            </div>
+
+            <div class="stat-grid">
+              <div class="stat-chip" title="Влияет на максимум здоровья и броню">
+                <img src="img/stat/stoicism.png" class="icon-img" alt="">
+                <span class="stat-chip__name">Стойкость</span>
+                <span class="stat-chip__value" id="player-stoicism">0</span>
+              </div>
+              <div class="stat-chip" title="Влияет на урон и максимум здоровья">
+                <img src="img/stat/strength.png" class="icon-img" alt="">
+                <span class="stat-chip__name">Сила</span>
+                <span class="stat-chip__value" id="player-strength">0</span>
+              </div>
+              <div class="stat-chip" title="Поглощает N урона за каждый удар">
+                <img src="img/stat/armor.png" class="icon-img" alt="">
+                <span class="stat-chip__name">Броня</span>
+                <span class="stat-chip__value" id="player-armor">0</span>
+              </div>
+              <div class="stat-chip" title="Влияет на инициативу — кто атакует первым">
+                <img src="img/stat/agility.png" class="icon-img" alt="">
+                <span class="stat-chip__name">Ловкость</span>
+                <span class="stat-chip__value" id="player-agility">0</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CENTER DIVIDER -->
+      <div class="arena__divider" aria-hidden="true">
+        <div class="arena__divider-line"></div>
+        <span class="arena__divider-mark">VS</span>
+        <div class="arena__divider-line"></div>
+      </div>
+
+      <!-- ENEMY CARD -->
+      <section class="combatant combatant--enemy" id="enemy-card" aria-label="Противник">
+        <div class="combatant__frame">
+          <div class="combatant__portrait">
+            <span class="combatant__icon" id="enemy-icon">👹</span>
+          </div>
+          <div class="combatant__body">
+            <div class="combatant__headline">
+              <h2 class="combatant__name" id="enemy-name">Гоблин</h2>
+              <span class="combatant__level">Ур. <span id="enemy-level">1</span></span>
+              <span class="enemy-counter is-hidden" id="enemy-counter" title="Враг на этаже"></span>
+            </div>
+
+            <div class="bar bar--hp bar--enemy">
+              <div class="bar__track">
+                <div class="bar__fill" id="enemy-hp-fill"></div>
+                <div class="bar__flicker"></div>
+              </div>
+              <div class="bar__label">
+                <span class="bar__label-name"><img src="img/stat/health.png" class="icon-img" alt="">Здоровье</span>
+                <span class="bar__label-value"><span id="enemy-hp-current">0</span>/<span id="enemy-hp-max">0</span></span>
+              </div>
+            </div>
+
+            <div class="stat-grid">
+              <div class="stat-chip" title="Базовый урон противника">
+                <img src="img/stat/damage.png" class="icon-img" alt="">
+                <span class="stat-chip__name">Урон</span>
+                <span class="stat-chip__value" id="enemy-damage">0</span>
+              </div>
+              <div class="stat-chip" title="Ловкость — пробивает броню и влияет на инициативу">
+                <img src="img/stat/agility.png" class="icon-img" alt="">
+                <span class="stat-chip__name">Ловкость</span>
+                <span class="stat-chip__value" id="enemy-agility">0</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- EVENT CARD (фонтаны, сундуки и т.д.) -->
+      <section class="combatant combatant--event is-hidden" id="event-card" aria-label="Событие этажа">
+        <div class="combatant__frame">
+          <div class="combatant__portrait">
+            <span class="combatant__icon" id="event-icon">✨</span>
+          </div>
+          <div class="combatant__body">
+            <div class="combatant__headline">
+              <h2 class="combatant__name" id="event-name">Событие</h2>
+              <span class="enemy-counter is-hidden" id="event-counter" title="Событие на этаже"></span>
+            </div>
+            <p class="event-card__desc" id="event-desc"></p>
+          </div>
+        </div>
+      </section>
+
+      <!-- floating combat text spawns here via JS -->
+      <div class="fx-layer" id="fx-layer" aria-hidden="true"></div>
+    </main>
+
+    <!-- ACTIONS -->
+    <section class="actions" id="actions" aria-label="Действия">
+      <button class="action-btn action-btn--attack" id="btn-attack">
+        <span class="action-btn__icon">⚔️</span>
+        <span class="action-btn__label">Атаковать</span>
+      </button>
+      <button class="action-btn action-btn--interact is-hidden" id="btn-interact">
+        <span class="action-btn__icon">✨</span>
+        <span class="action-btn__label">Взаимодействовать</span>
+      </button>
+      <button class="action-btn action-btn--flee" id="btn-flee">
+        <span class="action-btn__icon">🏃</span>
+        <span class="action-btn__label">Бежать</span>
+      </button>
+      <button class="action-btn action-btn--continue is-hidden" id="btn-shop">
+        <span class="action-btn__icon">🛒</span>
+        <span class="action-btn__label">Лавка</span>
+      </button>
+      <button class="action-btn action-btn--craft is-hidden" id="btn-workbench">
+        <span class="action-btn__icon">⚒️</span>
+        <span class="action-btn__label">Крафт</span>
+      </button>
+      <button class="action-btn action-btn--rest is-hidden" id="btn-rest">
+        <span class="action-btn__icon">🔥</span>
+        <span class="action-btn__label">Привал</span>
+      </button>
+      <button class="action-btn action-btn--continue is-hidden" id="btn-descend">
+        <span class="action-btn__icon">🚪</span>
+        <span class="action-btn__label">Спуститься глубже</span>
+      </button>
+    </section>
+
+    <!-- COMBAT LOG -->
+    <section class="log" aria-label="Журнал боя">
+      <div class="log__header">
+        <span class="log__header-mark">⟡</span>
+        <span>Журнал подземелья</span>
+      </div>
+      <div class="log__body" id="log-body"></div>
+    </section>
+
+  </div>
+
+  <!-- SHOP MODAL -->
+  <div class="modal-overlay is-hidden" id="shop-overlay">
+    <div class="modal modal--shop">
+      <button class="modal__close" id="shop-close" aria-label="Закрыть">✕</button>
+      <h3 class="modal__title">Лавка торговца</h3>
+      <p class="modal__subtitle">Запасись снаряжением, прежде чем спускаться глубже</p>
+      <div class="shop-gold">
+        <span>💰</span>
+        <span id="shop-gold-value">0</span>
+      </div>
+      <div class="shop-grid" id="shop-grid"></div>
+      <button class="action-btn action-btn--continue action-btn--fab" id="btn-descend-from-shop">
+        <span class="action-btn__icon">🚪</span>
+        <span class="action-btn__label">Спуститься глубже</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- SKELETON MERCHANT MODAL -->
+  <div class="modal-overlay is-hidden" id="merchant-overlay">
+    <div class="modal modal--shop">
+      <button class="modal__close" id="merchant-close" aria-label="Закрыть">✕</button>
+      <h3 class="modal__title">💀 Скелет-Торговец</h3>
+      <p class="modal__subtitle">Три костяные диковины — потом он исчезнет навсегда</p>
+      <div class="shop-gold">
+        <span>💰</span>
+        <span id="merchant-gold-value">0</span>
+      </div>
+      <div class="shop-grid" id="merchant-grid"></div>
+    </div>
+  </div>
+
+<!-- HEALTH MODAL -->
+  <div class="modal-overlay is-hidden" id="health-overlay">
+    <div class="modal modal--health">
+      <button class="modal__close" id="health-close" aria-label="Закрыть">✕</button>
+      <h3 class="modal__title">❤️ Здоровье</h3>
+
+      <div class="health-layout">
+
+        <!-- LEFT: тело -->
+        <div class="health-col health-col--body">
+          <div class="body-silhouette-wrap">
+            <img src="img/ui/human.png" alt="" class="body-silhouette-img" draggable="false">
+
+            <button class="body-hotspot" data-part="head" style="top: 6%; left: 50%;">
+              <span class="body-hotspot__icon">🎯</span>
+            </button>
+            <button class="body-hotspot" data-part="neck" style="top: 17%; left: 50%;">
+              <span class="body-hotspot__icon">🔘</span>
+            </button>
+            <button class="body-hotspot" data-part="torso" style="top: 32%; left: 50%;">
+              <span class="body-hotspot__icon">🫀</span>
+            </button>
+            <button class="body-hotspot" data-part="left-arm" style="top: 33%; left: 34%;">
+              <span class="body-hotspot__icon">💪</span>
+            </button>
+            <button class="body-hotspot" data-part="right-arm" style="top: 33%; left: 66%;">
+              <span class="body-hotspot__icon">💪</span>
+            </button>
+            <button class="body-hotspot" data-part="left-hand" style="top: 50%; left: 34%;">
+              <span class="body-hotspot__icon">🖐️</span>
+            </button>
+            <button class="body-hotspot" data-part="right-hand" style="top: 50%; left: 66%;">
+              <span class="body-hotspot__icon">🖐️</span>
+            </button>
+            <button class="body-hotspot" data-part="left-leg" style="top: 72%; left: 41%;">
+              <span class="body-hotspot__icon">🦵</span>
+            </button>
+            <button class="body-hotspot" data-part="right-leg" style="top: 72%; left: 59%;">
+              <span class="body-hotspot__icon">🦵</span>
+            </button>
+            <button class="body-hotspot" data-part="left-foot" style="top: 93%; left: 41%;">
+              <span class="body-hotspot__icon">🦶</span>
+            </button>
+            <button class="body-hotspot" data-part="right-foot" style="top: 93%; left: 59%;">
+              <span class="body-hotspot__icon">🦶</span>
+            </button>
+          </div>
+
+          <div class="bodypart-detail" id="bodypart-detail">
+            <p class="bodypart-detail__hint">ЛКМ — посмотреть состояние. ПКМ — вылечить.</p>
+          </div>
+        </div>
+
+        <!-- RIGHT: сводка о персонаже -->
+        <div class="health-col health-col--info">
+
+          <div class="health-summary">
+            <div class="health-summary__bar">
+              <div class="health-summary__fill" id="health-hp-fill"></div>
+            </div>
+            <div class="health-summary__value">
+              <span id="health-hp-current">0</span>/<span id="health-hp-max">0</span> HP
+            </div>
+          </div>
+
+          <div class="char-stats">
+            <div class="char-stat">
+              <img src="img/stat/health.png" class="icon-img" alt="">
+              <span class="char-stat__label">Здоровье</span>
+              <span class="char-stat__value" id="cs-hp">—</span>
+            </div>
+            <div class="char-stat">
+              <img src="img/stat/damage.png" class="icon-img" alt="">
+              <span class="char-stat__label">Урон</span>
+              <span class="char-stat__value" id="cs-dmg">—</span>
+            </div>
+            <div class="char-stat">
+              <img src="img/stat/armor.png" class="icon-img" alt="">
+              <span class="char-stat__label">Броня</span>
+              <span class="char-stat__value" id="cs-armor">—</span>
+            </div>
+            <div class="char-stat">
+              <img src="img/stat/stoicism.png" class="icon-img" alt="">
+              <span class="char-stat__label">Стойкость</span>
+              <span class="char-stat__value" id="cs-stoicism">—</span>
+            </div>
+            <div class="char-stat">
+              <img src="img/stat/strength.png" class="icon-img" alt="">
+              <span class="char-stat__label">Сила</span>
+              <span class="char-stat__value" id="cs-strength">—</span>
+            </div>
+            <div class="char-stat">
+              <img src="img/stat/agility.png" class="icon-img" alt="">
+              <span class="char-stat__label">Ловкость</span>
+              <span class="char-stat__value" id="cs-agility">—</span>
+            </div>
+          </div>
+
+          <div class="health-status">
+            <div class="health-status__title">Состояние ран</div>
+            <div class="health-status-list" id="health-status-list">
+              <p class="health-status-list__empty">Все части тела здоровы.</p>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- INVENTORY MODAL -->
+  <div class="modal-overlay is-hidden" id="inventory-overlay">
+    <div class="modal modal--character">
+      <button class="modal__close" id="inventory-close" aria-label="Закрыть">✕</button>
+      <h3 class="modal__title">🎒 Снаряжение и рюкзак</h3>
+
+      <div class="character-layout">
+
+        <!-- LEFT: paperdoll -->
+        <div class="paperdoll-col">
+          <div class="paperdoll">
+            <div class="paperdoll__stage">
+              <img src="img/ui/human.png" alt="" class="paperdoll__body-silhouette-img">
+
+              <button class="equip-slot equip-slot--sm" id="slot-helmet" data-slot="helmet" style="top: 4%; left: 50%;">
+                <span class="equip-slot__label">Шлем</span>
+                <span class="equip-slot__icon" id="slot-helmet-icon">⛑️</span>
+                <span class="equip-slot__name" id="slot-helmet-name">Пусто</span>
+              </button>
+
+              <button class="equip-slot equip-slot--sm" id="slot-weapon" data-slot="weapon" style="top: 36%; left: 18%;">
+                <span class="equip-slot__label">Оружие</span>
+                <span class="equip-slot__icon" id="slot-weapon-icon">🗡️</span>
+                <span class="equip-slot__name" id="slot-weapon-name">Пусто</span>
+              </button>
+
+              <button class="equip-slot equip-slot--sm" id="slot-shield" data-slot="shield" style="top: 36%; left: 82%;">
+                <span class="equip-slot__label" id="slot-shield-label">Рука</span>
+                <span class="equip-slot__icon" id="slot-shield-icon">🛡️</span>
+                <span class="equip-slot__name" id="slot-shield-name">Пусто</span>
+              </button>
+
+              <button class="equip-slot equip-slot--sm" id="slot-chestplate" data-slot="chestplate" style="top: 32%; left: 50%;">
+                <span class="equip-slot__label">Нагрудник</span>
+                <span class="equip-slot__icon" id="slot-chestplate-icon">🥋</span>
+                <span class="equip-slot__name" id="slot-chestplate-name">Пусто</span>
+              </button>
+
+              <button class="equip-slot equip-slot--sm" id="slot-greaves" data-slot="greaves" style="top: 62%; left: 50%;">
+                <span class="equip-slot__label">Поножи</span>
+                <span class="equip-slot__icon" id="slot-greaves-icon">🦾</span>
+                <span class="equip-slot__name" id="slot-greaves-name">Пусто</span>
+              </button>
+
+              <button class="equip-slot equip-slot--sm" id="slot-boots" data-slot="boots" style="top: 88%; left: 50%;">
+                <span class="equip-slot__label">Ботинки</span>
+                <span class="equip-slot__icon" id="slot-boots-icon">👢</span>
+                <span class="equip-slot__name" id="slot-boots-name">Пусто</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="bodypart-detail" id="equip-detail">
+            <p class="bodypart-detail__hint">Нажми на слот, чтобы увидеть надетый предмет.</p>
+          </div>
+        </div>
+
+        <!-- RIGHT: backpack -->
+        <div class="backpack-col">
+          <div class="backpack-header">
+            <span class="backpack-header__title">Рюкзак</span>
+            <span class="backpack-header__hint">Нажми на слот — снять предмет</span>
+          </div>
+          <div class="inventory-scroll">
+            <div class="inventory-grid" id="inventory-grid"></div>
+            <p class="inventory-empty is-hidden" id="inventory-empty">
+              Пока пусто.<br>Побеждай врагов — они роняют снаряжение.
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+  <!-- LEVEL UP MODAL -->
+  <div class="modal-overlay is-hidden" id="levelup-overlay">
+    <div class="modal">
+      <h3 class="modal__title">Новый уровень!</h3>
+      <p class="modal__subtitle">Распредели очко характеристик</p>
+      <div class="modal__choices">
+        <button class="modal__choice" id="choice-stoicism">
+          <img src="img/stat/stoicism.png" class="icon-img modal__choice-icon" alt="">
+          <span class="modal__choice-name">Стойкость</span>
+          <span class="modal__choice-desc">+10 макс. HP, +1 броня</span>
+        </button>
+        <button class="modal__choice" id="choice-strength">
+          <img src="img/stat/strength.png" class="icon-img modal__choice-icon" alt="">
+          <span class="modal__choice-name">Сила</span>
+          <span class="modal__choice-desc">+2 урона, +5 макс. HP</span>
+        </button>
+        <button class="modal__choice" id="choice-agility">
+          <img src="img/stat/agility.png" class="icon-img modal__choice-icon" alt="">
+          <span class="modal__choice-name">Ловкость</span>
+          <span class="modal__choice-desc">+1 к броску инициативы</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- RACES MODAL -->
+  <div class="modal-overlay is-hidden" id="races-overlay">
+    <div class="modal modal--races">
+      <button class="modal__close" id="races-close" aria-label="Закрыть">✕</button>
+      <h3 class="modal__title">Расы подземелья</h3>
+      <div class="races-list" id="races-list"></div>
+    </div>
+  </div>
+
+  <!-- BEST RUN RECORD MODAL -->
+  <div class="modal-overlay is-hidden" id="records-overlay">
+    <div class="modal modal--records">
+      <button class="modal__close" id="records-close" aria-label="Закрыть">✕</button>
+      <h3 class="modal__title">🏆 Лучший забег</h3>
+      <div id="records-body"></div>
+    </div>
+  </div>
+
+  <!-- ENEMY LORE MODAL -->
+  <div class="modal-overlay is-hidden" id="enemy-lore-overlay">
+    <div class="modal modal--enemy-lore">
+      <button class="modal__close" id="enemy-lore-close" aria-label="Закрыть">✕</button>
+      <h3 class="enemy-lore__name" id="enemy-lore-name">Противник</h3>
+      <div class="enemy-lore__frame" id="enemy-lore-icon"></div>
+      <p class="enemy-lore__label">Информация о враге</p>
+      <p class="enemy-lore__text" id="enemy-lore-text"></p>
+      <button class="enemy-lore__race is-hidden" id="enemy-lore-race"></button>
+    </div>
+  </div>
+
+  <!-- GAME OVER MODAL -->
+  <div class="modal-overlay is-hidden" id="gameover-overlay">
+    <div class="modal modal--gameover">
+      <h3 class="modal__title modal__title--death">Ты пал в подземелье</h3>
+      <p class="modal__subtitle">Достигнута глубина <span id="gameover-depth">1</span></p>
+      <button class="action-btn action-btn--attack" id="btn-restart">
+        <span class="action-btn__icon">🔥</span>
+        <span class="action-btn__label">Начать заново</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- WORKBENCH MODAL -->
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Cinzel+Decorative:wght@700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">  <div class="modal-overlay is-hidden" id="workbench-overlay">
+    <div class="modal modal--workbench">
+      <button class="modal__close" id="workbench-close" aria-label="Закрыть">✕</button>
+      <h3 class="modal__title">⚒️ Рабочая станция</h3>
+      <p class="modal__subtitle">Собирай зелья из трав, найденных в подземелье</p>
+      <div class="craft-grid" id="crafting-grid"></div>
+      <button class="action-btn action-btn--craft action-btn--fab" id="btn-descend-from-workbench">
+        <span class="action-btn__icon">🚪</span>
+        <span class="action-btn__label">Спуститься глубже</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ABOUT MODAL -->
+  <div class="modal-overlay is-hidden" id="about-overlay">
+    <div class="modal modal--about">
+      <button class="modal__close" id="about-close" aria-label="Закрыть">✕</button>
+      <h3 class="modal__title">Об игре</h3>
+      <div class="about-body">
+        <p><strong>ДЫБЕНКО</strong> — браузерная roguelike игра, которая разрабатывается одним человеком: <strong>ManagerMoney</strong>.</p>
+        <p>Игра постепенно растёт: новые механики, враги, снаряжение и события добавляются от билда к билду — прогресс можно отслеживать в списке изменений на главном экране.</p>
+        <p>Вдохновение — классические roguelike-игры и, в первую очередь, <strong>Dwarf Fortress</strong>: глубокие системы, которые взаимодействуют друг с другом неожиданным образом.</p>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
